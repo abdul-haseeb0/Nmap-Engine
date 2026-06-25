@@ -1,0 +1,54 @@
+from scans import REGISTRY as SCANNERS
+
+
+def banner():
+    print("\n")
+    banner_lines = [
+        "███╗   ██╗███╗   ███╗ █████╗ ██████╗    ███████╗███╗   ██╗ ██████╗ ██╗███╗   ██╗███████╗",
+        "████╗  ██║████╗ ████║██╔══██╗██╔══██╗   ██╔════╝████╗  ██║██╔════╝ ██║████╗  ██║██╔════╝",
+        "██╔██╗ ██║██╔████╔██║███████║██████╔╝   █████╗  ██╔██╗ ██║██║  ███╗██║██╔██╗ ██║█████╗",
+        "██║╚██╗██║██║╚██╔╝██║██╔══██║██╔═══╝    ██╔══╝  ██║╚██╗██║██║   ██║██║██║╚██╗██║██╔══╝",
+        "██║ ╚████║██║ ╚═╝ ██║██║  ██║██║        ███████╗██║ ╚████║╚██████╔╝██║██║ ╚████║███████╗",
+        "╚═╝  ╚═══╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝        ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝╚══════╝",
+    ]
+
+    colors = [
+        (180, 90, 0),
+        (200, 105, 0),
+        (220, 120, 0),
+        (235, 140, 0),
+        (250, 165, 0),
+        (255, 190, 20),
+    ]
+
+    reset = "\033[0m"
+
+    for line, (r, g, b) in zip(banner_lines, colors):
+        print(f"\033[38;2;{r};{g};{b}m{line}{reset}")
+
+    width = len(banner_lines[0])
+    subtitle = "Network Intelligence Suite"
+
+    print()
+    print(
+        f"\033[38;2;170;170;170m"
+        f"{subtitle.center(width)}"
+        f"{reset}"
+    )
+
+def print_menu():
+
+    print("\n  AVAILABLE SCANNING MODULES")
+    print("  " + "-" * 56, "\n")
+
+
+    for i in range(0, len(SCANNERS), 2):
+        scan1 = f"[{i + 1}] {SCANNERS[i].name}"
+
+        scan2 = f"[{i + 2}] {SCANNERS[i + 1].name}" if (i + 1) < len(SCANNERS) else ""
+        print(f"  {scan1:<27} |  {scan2}")
+
+    print("\n")
+    print("  " + "-" * 56)
+    print(f"  [{len(SCANNERS) + 1}] Exit Framework")
+    print("  " + "-" * 56, "\n")

@@ -1,47 +1,54 @@
-import subprocess
+from scans import REGISTRY as SCANNERS
+from utils.ui import banner, print_menu
+from colorama import Fore, Style
 
 
-def ping_scan(subnet):
-    result = subprocess.run(['nmap', '-sn', subnet],
-                   check=True,
-                   text=True,
-                   capture_output=True
-                   )
-    return result.stdout
+def get_choice():
 
-def service_detection(ip):
-    serv_out = subprocess.run(['nmap', '-sV', ip],
-                            check=True,
-                            text=True,
-                            capture_output=True
-                            )
-    return serv_out.stdout
+    raw = input(f" nmap-engine > Select a module [1-{len(SCANNERS) + 1}]: ").strip()
 
+    if not raw.isdigit():
+        print(Fore.RED, f"[!] '{raw}' is not a valid number. Please try again.", Style.RESET_ALL)
+        return None
 
-while True:
+    choice = int(raw)
 
-    print("1- Ping scan\n2- Service Detection\n3- Exit\n")
-    print("Make Sure Enter Choice in Numbers eg. 2\n")
+    if not (1 <= choice <= len(SCANNERS) + 1):
+        print(Fore.RED, f"[!] Please enter a number between 1 and {len(SCANNERS) + 1}.", Style.RESET_ALL)
+        return None
 
-    choice = int(input('Select your Scan: '))
+    return choice
 
-    if choice == 1:
-        target = input("Enter a subnet eg. 192.168.0.1/24: ")
+def main():
+    while True:
+        banner()
 
-        try:
-            output = ping_scan(target)
+        print_menu()
+
+        choice = get_choice()
+
+        if choice is None:
+            input("\n Press Enter to try again...")
+            print("\033[H\033[J", end="")
+            continue
+
+        if choice == len(SCANNERS) + 1:
+            print(Fore.RED, "\n [+] Exiting toolkit framework gracefully. Goodbye.\n", Style.RESET_ALL)
+            break
+
+        scanner = SCANNERS[choice - 1]
+        target = input(f" nmap-engine > Target IP / Domain: ").strip()
+
+        print(Fore.LIGHTMAGENTA_EX, f"\n[*] Running {scanner.name} against '{target}'...\n", Style.RESET_ALL)
+        output = scanner.run(target)
+
+        if output:
+            print(Fore.GREEN, "[+] SCAN COMPLETE - RESULTS RETURNED ↴\n", Style.RESET_ALL)
             print(output)
-        except subprocess.CalledProcessError:
-            print("[+] Ping scan failed")
+        else:
+            print(Fore.RED, "[-] SCAN TERMINATED: No data received or execution failed.", Style.RESET_ALL)
+            print("     (Check system log for debug metrics)")
 
-    elif choice == 2:
-        ser_det_target = input("Enter a target eg. 192.168.0.115: ")
 
-        try:
-            ser_det = service_detection(ser_det_target)
-            print(ser_det)
-        except subprocess.CalledProcessError:
-            print("[+] Service Detection failed")
-
-    elif choice == 3:
-        break
+if __name__ == "__main__":
+    main()
